@@ -3,7 +3,7 @@ import { PoolBaseAmount, CurveBase } from './curveBase.js';
 import { LaunchpadPoolInfo, LaunchpadConfigInfo } from '../type.js';
 import Decimal from 'decimal.js';
 import '@solana/web3.js';
-import '../../../api-37c6e723.js';
+import '../../../api-7878e3ee.js';
 import 'axios';
 import '../../../solana/type.js';
 import '@solana/spl-token';

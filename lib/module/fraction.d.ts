@@ -1,5 +1,5 @@
 import 'bn.js';
-export { ce as Fraction } from '../api-37c6e723.js';
+export { ce as Fraction } from '../api-7878e3ee.js';
 import 'axios';
 import '../solana/type.js';
 import '@solana/web3.js';

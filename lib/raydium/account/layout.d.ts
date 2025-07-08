@@ -4,8 +4,8 @@ import * as _solana_web3_js from '@solana/web3.js';
 import '../../marshmallow/buffer-layout.js';
 
 declare const splAccountLayout: Structure<number | _solana_web3_js.PublicKey | BN, "", {
-    owner: _solana_web3_js.PublicKey;
     state: number;
+    owner: _solana_web3_js.PublicKey;
     amount: BN;
     mint: _solana_web3_js.PublicKey;
     delegateOption: number;
