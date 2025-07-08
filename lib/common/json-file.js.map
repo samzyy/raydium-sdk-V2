@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/common/json-file.ts"],"sourcesContent":["export interface JsonFileMetaData {\r\n  readonly name: string;\r\n  readonly timestamp: string;\r\n  readonly version: {\r\n    major: number;\r\n    minor: number;\r\n    patch: number;\r\n  };\r\n}\r\n"],"mappings":"kWAAA","names":[]}
