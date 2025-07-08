@@ -1,5 +1,5 @@
 import { Commitment, Connection, PublicKey, AccountInfo } from '@solana/web3.js';
-import { bY as ReturnTypeFetchMultipleMintInfos } from '../api-60c54c87.js';
+import { bY as ReturnTypeFetchMultipleMintInfos } from '../api-37c6e723.js';
 import 'axios';
 import '../solana/type.js';
 import 'bn.js';

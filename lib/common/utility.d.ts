@@ -1,5 +1,5 @@
 import { PublicKey } from '@solana/web3.js';
-import { bZ as ReplaceType } from '../api-60c54c87.js';
+import { bZ as ReplaceType } from '../api-37c6e723.js';
 import 'axios';
 import '../solana/type.js';
 import 'bn.js';

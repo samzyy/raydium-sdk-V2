@@ -1,4 +1,4 @@
-export { ch as Price } from '../api-60c54c87.js';
+export { ch as Price } from '../api-37c6e723.js';
 import './token.js';
 import 'axios';
 import '../solana/type.js';

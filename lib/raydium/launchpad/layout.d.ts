@@ -35,9 +35,9 @@ declare const LaunchpadPool: Structure<number | _solana_web3_js.PublicKey | BN |
     unlockPeriod: BN;
     totalAllocatedShare: BN;
 }, "", {
-    status: number;
     creator: _solana_web3_js.PublicKey;
     bump: number;
+    status: number;
     mintA: _solana_web3_js.PublicKey;
     mintB: _solana_web3_js.PublicKey;
     vaultA: _solana_web3_js.PublicKey;
@@ -73,7 +73,7 @@ declare const LaunchpadVesting: Structure<_solana_web3_js.PublicKey | BN | BN[],
     beneficiary: _solana_web3_js.PublicKey;
     tokenShareAmount: BN;
 }>;
-declare const PlatformConfig: Structure<number[] | _solana_web3_js.PublicKey | BN, "", {
+declare const PlatformConfig: Structure<_solana_web3_js.PublicKey | number[] | BN, "", {
     name: number[];
     feeRate: BN;
     epoch: BN;

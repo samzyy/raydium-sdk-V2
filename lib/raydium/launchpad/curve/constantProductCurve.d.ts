@@ -4,7 +4,7 @@ import { CurveBase, PoolBaseAmount } from './curveBase.js';
 import { LaunchpadPoolInfo } from '../type.js';
 export { Q64 } from '../../clmm/utils/constants.js';
 import '@solana/web3.js';
-import '../../../api-60c54c87.js';
+import '../../../api-37c6e723.js';
 import 'axios';
 import '../../../solana/type.js';
 import '@solana/spl-token';

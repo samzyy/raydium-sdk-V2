@@ -30,7 +30,7 @@
     "build-docs": "typedoc",
     "build-docs-watch": "typedoc --watch",
     "build-dist": "rm -rf dist && mkdir dist && yarn build-docs",
-    "build-lib": "rm -rf lib && tsup src --format cjs,esm --dts --sourcemap --no-splitting --minify -d lib --silent",
+    "build-lib": "tsup src --format cjs,esm --dts --sourcemap --no-splitting --minify -d lib --silent",
     "build-all": "yarn build-dist && yarn build-lib",
     "build": "yarn build-lib",
     "push": "yarn build && yarn publish",

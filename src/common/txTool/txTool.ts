@@ -278,6 +278,7 @@ export class TxBuilder {
         if (this.signers.length) transaction.sign(...this.signers);
 
         printSimulate([transaction]);
+        console.log("SEND 1");
         if (this.owner?.isKeyPair) {
           const txId = sendAndConfirm
             ? await sendAndConfirmTransaction(
@@ -394,6 +395,7 @@ export class TxBuilder {
             return tx;
           });
           printSimulate(partialSignedTxs);
+          console.log("SEND 2");
           const signedTxs = await this.signAllTransactions(partialSignedTxs);
           if (sequentially) {
             let i = 0;
@@ -551,6 +553,7 @@ export class TxBuilder {
       execute: async (params) => {
         const { skipPreflight = true, sendAndConfirm, notSendToRpc } = params || {};
         printSimulate([transaction]);
+        console.log("SEND 3");
         if (this.owner?.isKeyPair) {
           const txId = await this.connection.sendTransaction(transaction, { skipPreflight });
           if (sendAndConfirm) {
@@ -628,6 +631,7 @@ export class TxBuilder {
         const { sequentially, onTxUpdate, recentBlockHash: propBlockHash, skipPreflight = true } = executeParams || {};
         if (propBlockHash) allTransactions.forEach((tx) => (tx.message.recentBlockhash = propBlockHash));
         printSimulate(allTransactions);
+        console.log("SEND 4");
         if (this.owner?.isKeyPair) {
           if (sequentially) {
             const txIds: string[] = [];
@@ -639,7 +643,7 @@ export class TxBuilder {
 
             return { txIds, signedTxs: allTransactions };
           }
-
+          
           return {
             txIds: await Promise.all(
               allTransactions.map(async (tx) => {
@@ -854,6 +858,8 @@ export class TxBuilder {
           if (allSigners[idx].length) tx.sign(...allSigners[idx]);
         });
         printSimulate(allTransactions);
+        console.log("SEND 5");
+        console.log("sizeCheckBuild")
         if (this.owner?.isKeyPair) {
           if (sequentially) {
             let i = 0;
@@ -1150,26 +1156,28 @@ export class TxBuilder {
           if (propBlockHash) tx.message.recentBlockhash = propBlockHash;
         });
         printSimulate(allTransactions);
+        console.log("SEND 6");
+        console.log("sizeCheckBuildV0")
         if (this.owner?.isKeyPair) {
-          if (sequentially) {
-            let i = 0;
-            const txIds: string[] = [];
-            for (const tx of allTransactions) {
-              ++i;
-              if (i <= skipTxCount) {
-                console.log("skip tx: ", i);
-                txIds.push("tx skipped");
-                continue;
-              }
-              const txId = await this.connection.sendTransaction(tx, { skipPreflight });
-              await confirmTransaction(this.connection, txId);
+          // if (sequentially) {
+          //   let i = 0;
+          //   const txIds: string[] = [];
+          //   for (const tx of allTransactions) {
+          //     ++i;
+          //     if (i <= skipTxCount) {
+          //       console.log("skip tx: ", i);
+          //       txIds.push("tx skipped");
+          //       continue;
+          //     }
+          //     console.log('sending transaction')
+          //     const txId = await this.connection.sendTransaction(tx, { skipPreflight });
+          //     await confirmTransaction(this.connection, txId);
 
-              txIds.push(txId);
-            }
-
-            return { txIds, signedTxs: allTransactions };
-          }
-
+          //     txIds.push(txId);
+          //   }
+          //   console.log('returning')
+          //   return { txIds, signedTxs: allTransactions };
+          // }
           return {
             txIds: await Promise.all(
               allTransactions.map(async (tx) => {

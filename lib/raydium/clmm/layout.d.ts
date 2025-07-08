@@ -40,7 +40,7 @@ declare const RewardInfo: Structure<number | _solana_web3_js.PublicKey | BN, "",
     tokenVault: _solana_web3_js.PublicKey;
     rewardGrowthGlobalX64: BN;
 }>;
-declare const PoolInfoLayout: Structure<number | number[] | _solana_web3_js.PublicKey | Buffer | BN | BN[] | {
+declare const PoolInfoLayout: Structure<number | _solana_web3_js.PublicKey | Buffer | number[] | BN | BN[] | {
     rewardState: number;
     rewardClaimed: BN;
     creator: _solana_web3_js.PublicKey;
@@ -53,8 +53,6 @@ declare const PoolInfoLayout: Structure<number | number[] | _solana_web3_js.Publ
     tokenVault: _solana_web3_js.PublicKey;
     rewardGrowthGlobalX64: BN;
 }[], "", {
-    liquidity: BN;
-    status: number;
     padding: BN[];
     rewardInfos: {
         rewardState: number;
@@ -72,6 +70,8 @@ declare const PoolInfoLayout: Structure<number | number[] | _solana_web3_js.Publ
     creator: _solana_web3_js.PublicKey;
     bump: number;
     startTime: BN;
+    liquidity: BN;
+    status: number;
     ammConfig: _solana_web3_js.PublicKey;
     mintA: _solana_web3_js.PublicKey;
     mintB: _solana_web3_js.PublicKey;
@@ -107,13 +107,13 @@ declare const PositionInfoLayout: Structure<number | _solana_web3_js.PublicKey |
     growthInsideLastX64: BN;
     rewardAmountOwed: BN;
 }[], "", {
-    liquidity: BN;
     rewardInfos: {
         growthInsideLastX64: BN;
         rewardAmountOwed: BN;
     }[];
     bump: number;
     poolId: _solana_web3_js.PublicKey;
+    liquidity: BN;
     nftMint: _solana_web3_js.PublicKey;
     tickLower: number;
     tickUpper: number;
@@ -124,9 +124,9 @@ declare const PositionInfoLayout: Structure<number | _solana_web3_js.PublicKey |
 }>;
 declare type ClmmPositionLayout = ReturnType<typeof PositionInfoLayout.decode>;
 declare const ProtocolPositionLayout: Structure<number | _solana_web3_js.PublicKey | Buffer | BN | BN[], "", {
-    liquidity: BN;
     bump: number;
     poolId: _solana_web3_js.PublicKey;
+    liquidity: BN;
     feeGrowthInsideLastX64A: BN;
     feeGrowthInsideLastX64B: BN;
     tokenFeesOwedA: BN;
@@ -143,7 +143,7 @@ declare const TickLayout: Structure<number | number[] | BN | BN[], "", {
     feeGrowthOutsideX64B: BN;
     rewardGrowthsOutsideX64: BN[];
 }>;
-declare const TickArrayLayout: Structure<number | number[] | _solana_web3_js.PublicKey | Buffer | {
+declare const TickArrayLayout: Structure<number | _solana_web3_js.PublicKey | Buffer | number[] | {
     tick: number;
     liquidityNet: BN;
     liquidityGross: BN;

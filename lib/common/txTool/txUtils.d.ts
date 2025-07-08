@@ -1,6 +1,6 @@
 import { TransactionInstruction, Connection, Commitment, PublicKey, Transaction, EpochInfo, VersionedTransaction } from '@solana/web3.js';
 import { CacheLTA } from './lookupTable.js';
-import { bS as ComputeBudgetConfig } from '../../api-60c54c87.js';
+import { bS as ComputeBudgetConfig } from '../../api-37c6e723.js';
 import 'axios';
 import '../../solana/type.js';
 import 'bn.js';
