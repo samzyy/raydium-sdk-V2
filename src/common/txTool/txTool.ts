@@ -1172,13 +1172,15 @@ export class TxBuilder {
           recentBlockhash: blockHash,
         })
       ) {
+        console.log("MESSAGE 1")
         const messageV0 = new TransactionMessage({
           payerKey: this.feePayer,
           recentBlockhash: blockHash,
-          instructions: [tipInstruction, ...computeBudgetData.instructions, ...instructionQueue],
+          instructions: [tipInstruction, ...instructionQueue],
         }).compileToV0Message(Object.values(lookupTableAddressAccount));
         allTransactions.push(new VersionedTransaction(messageV0));
       } else {
+        console.log("MESSAGE 2")
         const messageV0 = new TransactionMessage({
           payerKey: this.feePayer,
           recentBlockhash: blockHash,
@@ -1187,7 +1189,40 @@ export class TxBuilder {
         allTransactions.push(new VersionedTransaction(messageV0));
       }
 
+      const tip = new TransactionMessage({
+        payerKey: this.feePayer,
+        recentBlockhash: blockHash,
+        instructions: [tipInstruction]
+      }).compileToV0Message([]);
+
+      const tipTx = new VersionedTransaction(tip);
+
+      console.log("📦 Tip-only tx size:", tipTx.serialize().length);
+
+      const compute = new TransactionMessage({
+        payerKey: this.feePayer,
+        recentBlockhash: blockHash,
+        instructions: [...computeBudgetData.instructions],
+      }).compileToV0Message(Object.values(lookupTableAddressAccount));
+
+      const computeTx = new VersionedTransaction(compute);
+
+      console.log("📦 computeTx-only tx size:", computeTx.serialize().length);
+
       allSigners.push(_signers);
+
+      const instruction = new TransactionMessage({
+        payerKey: this.feePayer,
+        recentBlockhash: blockHash,
+        instructions: [...instructionQueue],
+      }).compileToV0Message([]);
+
+      const instructionTx = new VersionedTransaction(instruction);
+
+      console.log("📦 instructionTx-only tx size:", instructionTx.serialize().length);
+
+      allSigners.push(_signers);
+
     }
 
     if (this.owner?.signer) {
@@ -1198,6 +1233,7 @@ export class TxBuilder {
 
     allTransactions.forEach((tx, idx) => {
       tx.sign(allSigners[idx]);
+      console.log(`Tx #${idx + 1} size (bytes):`, tx.serialize().length);
     });
 
     return {
