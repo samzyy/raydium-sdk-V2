@@ -27,6 +27,25 @@ import {
   getRecentBlockHash,
   printSimulate,
 } from "./txUtils";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+
+// Optional: keep this at top level
+const SENDER_ENDPOINT = 'http://sg-sender.helius-rpc.com/fast'; // use closest region, currently singapore
+
+
+const TIP_AMOUNT = 0.001 * LAMPORTS_PER_SOL;
+const TIP_ACCOUNTS = [
+  "4ACfpUFoaSD9bfPdeu6DBt89gB6ENTeHBXCAi87NhDEE",
+  "D2L6yPZ2FmmmTKPgzaMKdhu6EWZcTpLy1Vhx8uvZe7NZ",
+  "9bnz4RShgq1hAnLnZbP8kbgBg1kEmcJBYQq3gQbmnSta",
+  "5VY91ws6B2hMmBFRsXkoAAdsPHBJwRfBht4DXox3xkwn",
+  "2nyhqdwKcJZR2vcqCyrYsaPVdAnFoJjiksCXJ7hfEYgD",
+  "2q5pghRs6arqVjRvT5gfgWfWcHWmw1ZuCzphgd5KfWGJ",
+  "wyvPkWjVZz1M8fHQnMMCDTQDbkManefNNhweYk5WkcF",
+  "3KCKozbAaF75qEU33jtzozcJ29yJuaLJTy2jFdzUY8bT",
+  "4vieeGHPYPG2MmyPRcYjdiDmmhN3ww7hsFNap8pVN3Ey",
+  "4TQLFNWK8AovT1gFvda5jfw2oJeRMKEmw7aH6MGBJ3or"
+].map(k => new PublicKey(k));
 
 interface SolanaFeeInfo {
   min: number;
@@ -130,6 +149,42 @@ export type MakeTxData<T = TxVersion.LEGACY, O = Record<string, any>> = T extend
   : TxV0BuildData<O>;
 
 const LOOP_INTERVAL = 2000;
+
+export async function helius_sender(
+  signedTx
+) {
+   
+   // Serialize the tx
+  const b64 = Buffer.from(signedTx.serialize()).toString("base64");
+  
+  // Send via Sender
+  const response = await fetch(SENDER_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: Date.now().toString(),
+      method: 'sendTransaction',
+      params: [
+        b64,
+        {
+          encoding: 'base64',
+          skipPreflight: true,
+          maxRetries: 0,
+        },
+      ],
+    }),
+  });
+  
+  const json = await response.json();
+  console.log("Helius response:", JSON.stringify(json, null, 2));
+  if (json.error) throw new Error(json.error.message);
+
+  const signature = json.result;
+  console.log('Transaction sent:', signature);
+
+  return signature;
+}
 
 export class TxBuilder {
   private connection: Connection;
@@ -1100,10 +1155,18 @@ export class TxBuilder {
       );
       const _signers = [..._signerStrs.values()].map((i) => signerKey[i]).filter((i) => i !== undefined);
 
+      // 👉 TIP INSTRUCTION
+      const tipAccount = TIP_ACCOUNTS[Math.floor(Math.random() * TIP_ACCOUNTS.length)];
+      const tipInstruction = SystemProgram.transfer({
+        fromPubkey: this.feePayer,
+        toPubkey: tipAccount,
+        lamports: Math.floor(0.001 * LAMPORTS_PER_SOL),
+      });
+
       if (
         computeBudgetConfig &&
         checkV0TxSize({
-          instructions: [...computeBudgetData.instructions, ...instructionQueue],
+          instructions: [tipInstruction, ...computeBudgetData.instructions, ...instructionQueue],
           payer: this.feePayer,
           lookupTableAddressAccount,
           recentBlockhash: blockHash,
@@ -1112,14 +1175,14 @@ export class TxBuilder {
         const messageV0 = new TransactionMessage({
           payerKey: this.feePayer,
           recentBlockhash: blockHash,
-          instructions: [...computeBudgetData.instructions, ...instructionQueue],
+          instructions: [tipInstruction, ...computeBudgetData.instructions, ...instructionQueue],
         }).compileToV0Message(Object.values(lookupTableAddressAccount));
         allTransactions.push(new VersionedTransaction(messageV0));
       } else {
         const messageV0 = new TransactionMessage({
           payerKey: this.feePayer,
           recentBlockhash: blockHash,
-          instructions: [...instructionQueue],
+          instructions: [tipInstruction, ...instructionQueue],
         }).compileToV0Message(Object.values(lookupTableAddressAccount));
         allTransactions.push(new VersionedTransaction(messageV0));
       }
@@ -1178,14 +1241,22 @@ export class TxBuilder {
           //   console.log('returning')
           //   return { txIds, signedTxs: allTransactions };
           // }
-          return {
-            txIds: await Promise.all(
-              allTransactions.map(async (tx) => {
-                return await this.connection.sendTransaction(tx, { skipPreflight });
-              }),
-            ),
-            signedTxs: allTransactions,
-          };
+          // return {
+          //   txIds: await Promise.all(
+          //     allTransactions.map(async (tx) => {
+          //       return await this.connection.sendTransaction(tx, { skipPreflight });
+          //     }),
+          //   ),
+          //   signedTxs: allTransactions,
+          // };
+          
+          // HELIUS SENDER IMPLEMENTATION
+          console.log("send transactions using Helius Sender")
+          for (const tx of allTransactions) {
+            const sig = await helius_sender(tx);
+            console.log('Sent tx:', sig);
+          }
+          return { txIds: [], signedTxs: [] };
         }
         if (this.signAllTransactions) {
           const needSignedTx = await this.signAllTransactions(
