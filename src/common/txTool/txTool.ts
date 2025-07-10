@@ -1163,63 +1163,12 @@ export class TxBuilder {
         lamports: Math.floor(0.001 * LAMPORTS_PER_SOL),
       });
 
-      if (
-        computeBudgetConfig &&
-        checkV0TxSize({
-          instructions: [tipInstruction, ...computeBudgetData.instructions, ...instructionQueue],
-          payer: this.feePayer,
-          lookupTableAddressAccount,
-          recentBlockhash: blockHash,
-        })
-      ) {
-        console.log("MESSAGE 1")
-        const messageV0 = new TransactionMessage({
-          payerKey: this.feePayer,
-          recentBlockhash: blockHash,
-          instructions: [tipInstruction, ...instructionQueue],
-        }).compileToV0Message(Object.values(lookupTableAddressAccount));
-        allTransactions.push(new VersionedTransaction(messageV0));
-      } else {
-        console.log("MESSAGE 2")
-        const messageV0 = new TransactionMessage({
-          payerKey: this.feePayer,
-          recentBlockhash: blockHash,
-          instructions: [tipInstruction, ...instructionQueue],
-        }).compileToV0Message(Object.values(lookupTableAddressAccount));
-        allTransactions.push(new VersionedTransaction(messageV0));
-      }
-
-      const tip = new TransactionMessage({
+      const messageV0 = new TransactionMessage({
         payerKey: this.feePayer,
         recentBlockhash: blockHash,
-        instructions: [tipInstruction]
-      }).compileToV0Message([]);
-
-      const tipTx = new VersionedTransaction(tip);
-
-      console.log("📦 Tip-only tx size:", tipTx.serialize().length);
-
-      const compute = new TransactionMessage({
-        payerKey: this.feePayer,
-        recentBlockhash: blockHash,
-        instructions: [...computeBudgetData.instructions],
+        instructions: [tipInstruction, ...instructionQueue],
       }).compileToV0Message(Object.values(lookupTableAddressAccount));
-
-      const computeTx = new VersionedTransaction(compute);
-
-      console.log("📦 computeTx-only tx size:", computeTx.serialize().length);
-
-      allSigners.push(_signers);
-
-      const instruction = new TransactionMessage({
-        payerKey: this.feePayer,
-        recentBlockhash: blockHash,
-        instructions: [...instructionQueue],
-      }).compileToV0Message([]);
-
-      const instructionTx = new VersionedTransaction(instruction);
-
-      console.log("📦 instructionTx-only tx size:", instructionTx.serialize().length);
+      allTransactions.push(new VersionedTransaction(messageV0));
 
       allSigners.push(_signers);
 
@@ -1255,8 +1204,7 @@ export class TxBuilder {
           if (propBlockHash) tx.message.recentBlockhash = propBlockHash;
         });
         printSimulate(allTransactions);
-        console.log("SEND 6");
-        console.log("sizeCheckBuildV0")
+        console.log("SEND 6: sizeCheckBuildV0");
         if (this.owner?.isKeyPair) {
           // if (sequentially) {
           //   let i = 0;
@@ -1289,8 +1237,8 @@ export class TxBuilder {
           // HELIUS SENDER IMPLEMENTATION
           console.log("send transactions using Helius Sender")
           for (const tx of allTransactions) {
-            const sig = await helius_sender(tx);
-            console.log('Sent tx:', sig);
+            // const sig = await helius_sender(tx);
+            // console.log('Sent tx:', sig);
           }
           return { txIds: [], signedTxs: [] };
         }
