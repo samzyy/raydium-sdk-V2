@@ -1203,41 +1203,13 @@ export class TxBuilder {
           if (allSigners[idx].length) tx.sign(allSigners[idx]);
           if (propBlockHash) tx.message.recentBlockhash = propBlockHash;
         });
-        printSimulate(allTransactions);
-        console.log("SEND 6: sizeCheckBuildV0");
+        // printSimulate(allTransactions);
+        // console.log("SEND 6: sizeCheckBuildV0");
         if (this.owner?.isKeyPair) {
-          // if (sequentially) {
-          //   let i = 0;
-          //   const txIds: string[] = [];
-          //   for (const tx of allTransactions) {
-          //     ++i;
-          //     if (i <= skipTxCount) {
-          //       console.log("skip tx: ", i);
-          //       txIds.push("tx skipped");
-          //       continue;
-          //     }
-          //     console.log('sending transaction')
-          //     const txId = await this.connection.sendTransaction(tx, { skipPreflight });
-          //     await confirmTransaction(this.connection, txId);
-
-          //     txIds.push(txId);
-          //   }
-          //   console.log('returning')
-          //   return { txIds, signedTxs: allTransactions };
-          // }
-          // return {
-          //   txIds: await Promise.all(
-          //     allTransactions.map(async (tx) => {
-          //       return await this.connection.sendTransaction(tx, { skipPreflight });
-          //     }),
-          //   ),
-          //   signedTxs: allTransactions,
-          // };
-          
           // HELIUS SENDER IMPLEMENTATION
-          console.log("send transactions using Helius Sender")
+          console.log("Sending transaction using Helius Sender")
           for (const tx of allTransactions) {
-            // const sig = await helius_sender(tx);
+            const sig = await helius_sender(tx);
             // console.log('Sent tx:', sig);
           }
           return { txIds: [], signedTxs: [] };
